@@ -1,9 +1,11 @@
 FROM centos
 MAINTAINER d9magai
 
-ENV LIBUV_VERSION v1.4.2
-ENV LIBUV_ARCHIVE libuv-$LIBUV_VERSION.tar.gz
 ENV LIBUV_PREFIX /opt/libuv
+ENV LIBUV_VERSION v1.4.2
+ENV LIBUV_BASENAME libuv-$LIBUV_VERSION
+ENV LIBUV_ARCHIVE libuv-$LIBUV_VERSION.tar.gz
+ENV LIBUV_ARCHIVE_URL http://libuv.org/dist/$LIBUV_VERSION/$LIBUV_ARCHIVE
 
 RUN yum update -y && yum install -y \
     tar \
@@ -13,10 +15,9 @@ RUN yum update -y && yum install -y \
 
 RUN mkdir -p $LIBUV_PREFIX/src \
     && cd $LIBUV_PREFIX/src \
-    && curl -sL http://libuv.org/dist/$LIBUV_VERSION/$LIBUV_ARCHIVE -o $LIBUV_ARCHIVE \
+    && curl -sL $LIBUV_ARCHIVE_URL -o $LIBUV_ARCHIVE \
     && tar xf $LIBUV_ARCHIVE \
-    && rm $LIBUV_ARCHIVE \
-    && cd `basename $LIBUV_ARCHIVE .tar.gz` \
+    && cd $LIBUV_BASENAME \
     && libtoolize -c \
     && ./autogen.sh \
     && ./configure --prefix=$LIBUV_PREFIX \
